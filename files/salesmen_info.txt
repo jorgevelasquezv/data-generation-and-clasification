@@ -1,0 +1,10 @@
+CC;89661753;Maria;Sanchez
+CC;64337228;Sofia;Lopez
+CC;16810952;Sofia;Perez
+CC;24438509;Maria;Torres
+CC;92809730;Sofia;Sanchez
+CC;83270021;Jose;Rodriguez
+CC;83184576;Francisco;Rodriguez
+CC;41728443;Carlos;Gomez
+CC;28414738;Francisco;Ramirez
+CC;81664720;Laura;Perez
