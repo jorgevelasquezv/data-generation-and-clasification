@@ -29,11 +29,11 @@ public class GeneratorFilesTest {
      * 
      * @param randomSalesCount The number of random sales to generate.
      * @param name             The name of the salesperson.
-     * @param documentNumber               The ID of the salesperson.
+     * @param documentNumber   The ID of the salesperson.
      */
     public void createSalesMenFile(int randomSalesCount, String name, String documentType, long documentNumber) {
         File directory = createDirectory("salesmen");
-        try (FileWriter fileWriter = new FileWriter(directory + "/"+ name + "_" + documentNumber + ".csv")) {
+        try (FileWriter fileWriter = new FileWriter(directory + "/" + name + "_" + documentNumber + ".csv")) {
 
             fileWriter.write(documentType + ";" + documentNumber + "\n");
 
