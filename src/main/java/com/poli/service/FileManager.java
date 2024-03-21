@@ -12,20 +12,24 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
 /**
- * The FileManager class contains methods to read and write information from and to files.
+ * The FileManager class contains methods to read and write information from and
+ * to files.
  */
 public class FileManager {
     /**
-     * Reads information from a sales men file and returns a list of Salesman objects.
+     * Reads information from a sales men file and returns a list of Salesman
+     * objects.
      *
      * @param filePath the path of the file to be read
-     * @return a list of Salesman objects containing the information read from the file
+     * @return a list of Salesman objects containing the information read from the
+     *         file
      */
     public List<Salesman> readInformationSalesmanFile(String filePath) {
         List<Salesman> salesMen = new ArrayList<>();
@@ -52,7 +56,8 @@ public class FileManager {
      * Reads information from a products file and returns a list of Product objects.
      *
      * @param filePath the path of the file to be read
-     * @return a list of Product objects containing the information read from the file
+     * @return a list of Product objects containing the information read from the
+     *         file
      */
     public List<Product> readFileWithInformationOnAvailableProducts(String filePath) {
         List<Product> products = new ArrayList<>();
@@ -78,10 +83,11 @@ public class FileManager {
      * Reads information from a sales file and returns a list of Sale objects.
      *
      * @param folderPath the path of the folder containing the files to be read
-     * @param products a list of Product objects containing the information of the available products
+     * @param products   a list of Product objects containing the information of the
+     *                   available products
      * @return a list of Sale objects containing the information read from the files
      */
-    public List<Sale> readSalesInformationFile(String folderPath, List<Product> products) {
+    public List<Sale> readSalesInformationFile(String folderPath, List<Product> products, List<Salesman> salesmen) {
         List<Sale> sales = new ArrayList<>();
         File folder = new File(folderPath);
         for (File file : folder.listFiles()) {
@@ -95,30 +101,33 @@ public class FileManager {
                     if (fragments.length == 2) {
                         if (isFirstLine) {
                             isFirstLine = false;
-                            sale.setSalesman(getSalesman(fragments));
+                            sale.setSalesman(getSalesman(fragments, salesmen));
                         } else {
                             productsSold.add(getProductSold(fragments, products));
                         }
                     }
+                    sale.setSoldProducts(productsSold);
                 }
                 sales.add(sale);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return sales;
+        return sales.stream().filter(sale -> !sale.getSoldProducts().isEmpty() && sale.getSalesman() != null).toList();
     }
-
 
     /**
      * Represents a salesman.
      */
-    private Salesman getSalesman(String[] fragments) {
-        return new Salesman().setDocumentType(fragments[0]).setDocumentNumber(Long.parseLong(fragments[1]));
+    private Salesman getSalesman(String[] fragments, List<Salesman> salesmen) {
+        return salesmen.stream()
+                .filter(salesman -> salesman.getDocumentNumber() == Long.parseLong(fragments[1])).findFirst()
+                .orElse(null);
     }
 
     /**
-     * Represents a product sold, including the product itself and the quantity sold.
+     * Represents a product sold, including the product itself and the quantity
+     * sold.
      */
     private ProductSold getProductSold(String[] fragments, List<Product> products) {
         return new ProductSold().setProduct(getProduct(fragments[0], products))
@@ -131,7 +140,6 @@ public class FileManager {
     private Product getProduct(String productId, List<Product> products) {
         return products.stream().filter(product -> product.getProductId().equals(productId)).findFirst().orElse(null);
     }
-
 
     /**
      * Writes a salesmen report to a file.
@@ -150,6 +158,8 @@ public class FileManager {
 
         salesmanReports.sort((s1, s2) -> s2.getTotalSales() - s1.getTotalSales());
 
+        createFolderIfNotExist(filePath);
+
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
             for (SalesmanReport salesmanReport : salesmanReports) {
                 bw.write(salesmanReport.getFullName() + ";" + salesmanReport.getTotalSales());
@@ -161,9 +171,11 @@ public class FileManager {
     }
 
     /**
-     * Calculates the total collection amount for a given salesman based on the sales data.
+     * Calculates the total collection amount for a given salesman based on the
+     * sales data.
      *
-     * @param salesman The salesman for whom the collection amount needs to be calculated.
+     * @param salesman The salesman for whom the collection amount needs to be
+     *                 calculated.
      * @param sales    The list of sales data.
      * @return The total collection amount for the given salesman.
      */
@@ -180,9 +192,10 @@ public class FileManager {
      * Writes a report of products sold to a file.
      *
      * @param productsSold The list of products sold.
-     * @param filePath The path of the file to write the report to.
+     * @param filePath     The path of the file to write the report to.
      */
-    public void writeProductsReport(List<ProductSold> productsSold, String filePath) {
+    public void writeProductsReport(List<Sale> sales, List<Product> products, String filePath) {
+        List<ProductSold> productsSold = generateProductSoldList(sales, products);
         List<ProductReport> productsReport = new ArrayList<>();
         productsSold.stream().map(productSold -> {
             ProductReport productReport = new ProductReport();
@@ -193,14 +206,66 @@ public class FileManager {
 
         productsReport.sort((p1, p2) -> (int) (p2.getTotalSold() - p1.getTotalSold()));
 
+        createFolderIfNotExist(filePath);
+
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
             for (ProductReport productReport : productsReport) {
-                bw.write(productReport.getProductName()+ ";" + productReport.getTotalSold());
+                bw.write(productReport.getProductName() + ";" + productReport.getTotalSold());
                 bw.newLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-}
 
+    /**
+     * Creates a folder if it does not exist.
+     *
+     * @param filePath The path of the folder to be created.
+     */
+    private void createFolderIfNotExist(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+        }
+    }
+
+    /**
+     * Generates a list of ProductSold objects by extracting the sold products from each sale in the given list of sales.
+     * The method sums the quantities of products with the same ID and generates a new list.
+     *
+     * @param sales The list of Sale objects.
+     * @param products The list of Product objects.
+     * @return A list of ProductSold objects with summed quantities for products with the same ID.
+     */
+    public List<ProductSold> generateProductSoldList(List<Sale> sales, List<Product> products) {
+        List<ProductSold> productSoldList = new ArrayList<>();
+        Map<String, Integer> productQuantityMap = new HashMap<>();
+
+        for (Sale sale : sales) {
+            for (ProductSold productSold : sale.getSoldProducts()) {
+                String productId = productSold.getProduct().getProductId();
+                int quantity = productSold.getSoldQuantity();
+
+                productQuantityMap.put(productId, productQuantityMap.getOrDefault(productId, 0) + quantity);
+            }
+        }
+
+        for (Map.Entry<String, Integer> entry : productQuantityMap.entrySet()) {
+            String productId = entry.getKey();
+            int quantity = entry.getValue();
+
+            Product product = getProduct(productId, products);
+
+            if (product != null) {
+                ProductSold productSold = new ProductSold();
+                productSold.setProduct(product);
+                productSold.setSoldQuantity(quantity);
+                productSoldList.add(productSold);
+            }
+        }
+
+        return productSoldList;
+    }
+
+}

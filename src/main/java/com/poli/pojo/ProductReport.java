@@ -46,4 +46,17 @@ public class ProductReport {
         this.totalSold = totalSold;
         return this;
     }
+
+    /**
+     * Returns a string representation of the ProductReport object.
+     *
+     * @return The string representation of the ProductReport object.
+     */
+    @Override
+    public String toString() {
+        return "ProductReport{" +
+                "productName='" + productName + '\'' +
+                ", totalSold=" + totalSold +
+                '}';
+    }
 }

@@ -45,4 +45,17 @@ public class Sale {
     public void setSoldProducts(List<ProductSold> soldProducts) {
         this.soldProducts = soldProducts;
     }
+
+    /**
+     * Returns a string representation of the Sale object.
+     *
+     * @return a string representation of the Sale object
+     */
+    @Override
+    public String toString() {
+        return "Sale{" +
+                "salesman=" + salesman +
+                ", soldProducts=" + soldProducts +
+                '}';
+    }
 }

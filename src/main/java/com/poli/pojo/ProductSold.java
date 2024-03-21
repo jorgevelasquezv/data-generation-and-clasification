@@ -46,4 +46,17 @@ public class ProductSold {
         this.product = product;
         return this;
     }
+
+    /**
+     * Returns a string representation of the ProductSold object.
+     *
+     * @return The string representation of the ProductSold object.
+     */
+    @Override
+    public String toString() {
+        return "ProductSold{" +
+                "soldQuantity=" + soldQuantity +
+                ", product=" + product +
+                '}';
+    }
 }

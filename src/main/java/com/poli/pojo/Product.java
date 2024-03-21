@@ -1,5 +1,7 @@
 package com.poli.pojo;
 
+import java.util.Objects;
+
 /**
  * The Product class represents a product in a store.
  * It contains information about the product's ID, name, and unit price.
@@ -68,4 +70,47 @@ public class Product {
         this.unitPrice = unitPrice;
         return this;
     }
+    
+    /**
+     * Returns a string representation of the product.
+     *
+     * @return a string representation of the product
+     */
+    @Override
+    public String toString() {
+        return "Product{" +
+                "productId='" + productId + '\'' +
+                ", productName='" + productName + '\'' +
+                ", unitPrice=" + unitPrice +
+                '}';
+    }
+
+    /**
+     * Checks if this product is equal to another object based on the productId.
+     *
+     * @param obj the object to compare with
+     * @return true if the products are equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Product otherProduct = (Product) obj;
+        return productId.equals(otherProduct.productId);
+    }
+
+    /**
+     * Returns the hash code value for the product.
+     *
+     * @return the hash code value
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(productId);
+    }
+
 }

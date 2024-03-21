@@ -122,4 +122,19 @@ public class Salesman {
     public int hashCode() {
         return Objects.hash(documentNumber, documentType);
     }
+
+    /**
+     * Returns a string representation of the Salesman object.
+     *
+     * @return a string representation of the Salesman object
+     */
+    @Override
+    public String toString() {
+        return "Salesman{" +
+                "documentType='" + documentType + '\'' +
+                ", documentNumber=" + documentNumber +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
+    }
 }

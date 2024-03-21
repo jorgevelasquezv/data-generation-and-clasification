@@ -29,8 +29,9 @@ public class GenerateInfoFiles {
             generator.createProductsFile(50);
 
             for (Salesman salesman : salesMen) {
-                String fullName = salesman.getFirstName() + " " + salesman.getLastName();
-                generator.createSalesMenFile(10, fullName, salesman.getDocumentNumber());
+                String name = salesman.getFirstName() + "_" + salesman.getLastName();
+                generator.createSalesMenFile(10,
+                        name, salesman.getDocumentType(), salesman.getDocumentNumber());
             }
 
             logger.info("Files generated successfully!");
