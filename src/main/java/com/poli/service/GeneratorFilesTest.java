@@ -29,17 +29,17 @@ public class GeneratorFilesTest {
      * 
      * @param randomSalesCount The number of random sales to generate.
      * @param name             The name of the salesperson.
-     * @param id               The ID of the salesperson.
+     * @param documentNumber   The ID of the salesperson.
      */
-    public void createSalesMenFile(int randomSalesCount, String name, long id) {
-        File directory = createDirectory();
-        try (FileWriter fileWriter = new FileWriter(directory + "/salesman_" + id + ".txt")) {
+    public void createSalesMenFile(int randomSalesCount, String name, String documentType, long documentNumber) {
+        File directory = createDirectory("salesmen");
+        try (FileWriter fileWriter = new FileWriter(directory + "/" + name + "_" + documentNumber + ".csv")) {
 
-            fileWriter.write(name + ";" + id + "\n");
+            fileWriter.write(documentType + ";" + documentNumber + "\n");
 
             for (int i = 0; i < randomSalesCount; i++) {
-                int productId = random.nextInt(100) + 1;
-                int quantity = random.nextInt(10) + 1;
+                int productId = random.nextInt(50) + 1;
+                int quantity = random.nextInt(20) + 1;
                 fileWriter.write(productId + ";" + quantity + "\n");
             }
 
@@ -55,8 +55,8 @@ public class GeneratorFilesTest {
      * @param productsCount The number of products to generate.
      */
     public void createProductsFile(int productsCount) {
-        File directory = createDirectory();
-        try (FileWriter fileWriter = new FileWriter(directory + "/products.txt")) {
+        File directory = createDirectory("info");
+        try (FileWriter fileWriter = new FileWriter(directory + "/products.csv")) {
             for (int i = 0; i < productsCount; i++) {
                 int productId = i + 1;
                 String productName = "Product-" + productId;
@@ -75,8 +75,8 @@ public class GeneratorFilesTest {
      * @param salesmanCount The number of salesmen to generate.
      */
     public List<Salesman> createSalesmanInfoFile(int salesmanCount) {
-        File directory = createDirectory();
-        try (FileWriter fileWriter = new FileWriter(directory + "/salesmen_info.txt")) {
+        File directory = createDirectory("info");
+        try (FileWriter fileWriter = new FileWriter(directory + "/salesmen_info.csv")) {
             List<Salesman> salesmen = new ArrayList<>();
             for (int i = 0; i < salesmanCount; i++) {
                 Salesman salesman = new Salesman();
@@ -102,8 +102,8 @@ public class GeneratorFilesTest {
      *
      * @return A File object representing the created folder.
      */
-    private File createDirectory() {
-        File folder = new File("files");
+    private File createDirectory(String subFolderName) {
+        File folder = new File("files" + File.separator + subFolderName);
         if (!folder.exists()) {
             folder.mkdir();
         }

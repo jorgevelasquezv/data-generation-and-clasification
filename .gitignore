@@ -5,6 +5,7 @@
 # Ignore compiled binaries
 /bin/
 /build/
+files/**
 
 # Ignore dependency directories
 /node_modules/
