@@ -1,12 +1,17 @@
 package com.poli.pojo;
 
+import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * The Product class represents a product in a store.
  * It contains information about the product's ID, name, and unit price.
  */
-public class Product {
+public class Product implements Serializable {
+    
+    private static final long serialVersionUID = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+
     private String productId;
     private String productName;
     private double unitPrice;

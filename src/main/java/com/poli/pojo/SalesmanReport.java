@@ -1,9 +1,13 @@
 package com.poli.pojo;
 
+import java.io.Serializable;
+import java.util.UUID;
+
 /**
  * The SalesmanReport class represents a report for a salesman, containing their full name and total sales.
  */
-public class SalesmanReport {
+public class SalesmanReport implements Serializable {
+    private static final long serialVersionUID = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
     private String fullName;
     private int totalSales;
 

@@ -1,9 +1,14 @@
 package com.poli.pojo;
 
+import java.io.Serializable;
+import java.util.UUID;
+
 /**
  * The ProductReport class represents a report for a product, including the product name and the total number of units sold.
  */
-public class ProductReport {
+public class ProductReport implements Serializable {
+
+    private static final long serialVersionUID = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
     private String productName;
     private double totalSold;
 

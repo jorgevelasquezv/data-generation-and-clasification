@@ -1,12 +1,15 @@
 package com.poli.pojo;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The Sale class represents a sale made by a salesman.
  * It contains information about the salesman and the products sold.
  */
-public class Sale {
+public class Sale implements Serializable {
+    private static final long serialVersionUID = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
     private Salesman salesman;
     private List<ProductSold> soldProducts;
 

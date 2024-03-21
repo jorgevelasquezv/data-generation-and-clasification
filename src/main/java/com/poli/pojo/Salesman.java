@@ -1,13 +1,16 @@
 package com.poli.pojo;
 
+import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * The Salesman class represents a salesman in a system.
  * It contains information about the salesman's document type, document number,
  * first name, and last name.
  */
-public class Salesman {
+public class Salesman implements Serializable {
+    private static final long serialVersionUID = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
     private String documentType;
     private Long documentNumber;
     private String firstName;

@@ -1,9 +1,14 @@
 package com.poli.pojo;
 
+import java.io.Serializable;
+import java.util.UUID;
+
 /**
  * Represents a product sold, including the quantity sold and the product information.
  */
-public class ProductSold {
+public class ProductSold implements Serializable {
+    
+    private static final long serialVersionUID = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
     int soldQuantity;
     Product product;
 
