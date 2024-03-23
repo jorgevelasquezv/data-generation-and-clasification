@@ -105,7 +105,7 @@ public class GeneratorFilesTest {
     private File createDirectory(String subFolderName) {
         File folder = new File("files" + File.separator + subFolderName);
         if (!folder.exists()) {
-            folder.mkdir();
+            folder.mkdirs();
         }
         return folder;
     }
