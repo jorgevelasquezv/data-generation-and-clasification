@@ -37,7 +37,7 @@ public class Main {
             fileManager.writeSalesMenReport(sales, "files/reports/salesmen_report.csv");
             LOGGER.info("The salesmen report was written successfully!");
         } catch (Exception e) {
-            LOGGER.severe("An error occurred while writing the salesmen report " + e.getMessage());
+            LOGGER.severe("An error occurred while writing the salesmen report. " + e.getMessage());
         }
 
         try {
@@ -45,7 +45,7 @@ public class Main {
             fileManager.writeProductsReport(sales, products, "files/reports/products_report.csv");
             LOGGER.info("The products report was written successfully!");
         } catch (Exception e) {
-            LOGGER.severe("An error occurred while writing the products report " + e.getMessage());
+            LOGGER.severe("An error occurred while writing the products report. " + e.getMessage());
         }
     }
 }

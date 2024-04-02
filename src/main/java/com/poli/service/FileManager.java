@@ -7,6 +7,9 @@ import com.poli.pojo.Sale;
 import com.poli.pojo.Salesman;
 import com.poli.pojo.SalesmanReport;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -23,6 +26,8 @@ import java.io.FileWriter;
  * to files.
  */
 public class FileManager {
+    private static final Logger LOGGER = Logger.getLogger(FileManager.class.getName());
+
     /**
      * Reads information from a sales men file and returns a list of Salesman
      * objects.
@@ -47,7 +52,7 @@ public class FileManager {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "{0} file not found", filePath);
         }
         return salesMen;
     }
@@ -74,7 +79,7 @@ public class FileManager {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe(filePath + " file not found");
         }
         return products;
     }
@@ -90,30 +95,60 @@ public class FileManager {
     public List<Sale> readSalesInformationFile(String folderPath, List<Product> products, List<Salesman> salesmen) {
         List<Sale> sales = new ArrayList<>();
         File folder = new File(folderPath);
-        for (File file : folder.listFiles()) {
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                String line;
-                boolean isFirstLine = true;
-                Sale sale = new Sale();
-                List<ProductSold> productsSold = new ArrayList<>();
-                while ((line = br.readLine()) != null) {
-                    String[] fragments = line.split(";");
-                    if (fragments.length == 2) {
-                        if (isFirstLine) {
-                            isFirstLine = false;
-                            sale.setSalesman(getSalesman(fragments, salesmen));
-                        } else {
-                            productsSold.add(getProductSold(fragments, products));
-                        }
-                    }
-                    sale.setSoldProducts(productsSold);
-                }
-                sales.add(sale);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (!folder.exists()) {
+            LOGGER.log(Level.SEVERE, "{0} folder not found", folderPath);
+            return sales;
         }
-        return sales.stream().filter(sale -> !sale.getSoldProducts().isEmpty() && sale.getSalesman() != null).toList();
+        if (folder.listFiles() == null) {
+            LOGGER.severe("No files found in the folder");
+            return sales;
+        }
+        if (products == null || products.isEmpty()) {
+            LOGGER.severe("The list of products is null or empty");
+            return sales;
+        }
+        if (salesmen == null || salesmen.isEmpty()) {
+            LOGGER.severe("The list of salesmen is null or empty");
+            return sales;
+        }
+        for (File file : folder.listFiles()) {
+            processFile(file, products, salesmen, sales);
+        }
+        return sales.stream().filter(sale -> sale.getSoldProducts() != null && !sale.getSoldProducts().isEmpty()
+                && sale.getSalesman() != null).toList();
+    }
+
+    /**
+     * Processes a file and extracts data to populate the given lists of products,
+     * salesmen, and sales.
+     *
+     * @param file     The file to be processed.
+     * @param products The list of products to populate with data from the file.
+     * @param salesmen The list of salesmen to populate with data from the file.
+     * @param sales    The list of sales to populate with data from the file.
+     */
+    private void processFile(File file, List<Product> products, List<Salesman> salesmen, List<Sale> sales) {
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            boolean isFirstLine = true;
+            Sale sale = new Sale();
+            List<ProductSold> productsSold = new ArrayList<>();
+            while ((line = br.readLine()) != null) {
+                String[] fragments = line.split(";");
+                if (fragments.length == 2) {
+                    if (isFirstLine) {
+                        isFirstLine = false;
+                        sale.setSalesman(getSalesman(fragments, salesmen));
+                    } else {
+                        productsSold.add(getProductSold(fragments, products));
+                    }
+                }
+                sale.setSoldProducts(productsSold);
+            }
+            sales.add(sale);
+        } catch (IOException e) {
+            LOGGER.severe(file.getName() + " file not found");
+        }
     }
 
     /**
@@ -148,6 +183,10 @@ public class FileManager {
      * @param filePath the path of the file to write the report to
      */
     public void writeSalesMenReport(List<Sale> sales, String filePath) {
+        if (sales == null || sales.isEmpty()) {
+            throw new IllegalArgumentException("The list of sales is null or empty");
+        }
+
         List<SalesmanReport> salesmanReports = new ArrayList<>();
         sales.stream().map(Sale::getSalesman).distinct().forEach(salesman -> {
             SalesmanReport salesmanReport = new SalesmanReport();
@@ -195,6 +234,14 @@ public class FileManager {
      * @param filePath     The path of the file to write the report to.
      */
     public void writeProductsReport(List<Sale> sales, List<Product> products, String filePath) {
+        if (sales == null || sales.isEmpty()) {
+            throw new IllegalArgumentException("The list of sales is null or empty");
+        }
+
+        if (products == null || products.isEmpty()) {
+            throw new IllegalArgumentException("The list of products is null or empty");
+        }
+
         List<ProductSold> productsSold = generateProductSoldList(sales, products);
         List<ProductReport> productsReport = new ArrayList<>();
         productsSold.stream().map(productSold -> {
@@ -231,12 +278,15 @@ public class FileManager {
     }
 
     /**
-     * Generates a list of ProductSold objects by extracting the sold products from each sale in the given list of sales.
-     * The method sums the quantities of products with the same ID and generates a new list.
+     * Generates a list of ProductSold objects by extracting the sold products from
+     * each sale in the given list of sales.
+     * The method sums the quantities of products with the same ID and generates a
+     * new list.
      *
-     * @param sales The list of Sale objects.
+     * @param sales    The list of Sale objects.
      * @param products The list of Product objects.
-     * @return A list of ProductSold objects with summed quantities for products with the same ID.
+     * @return A list of ProductSold objects with summed quantities for products
+     *         with the same ID.
      */
     public List<ProductSold> generateProductSoldList(List<Sale> sales, List<Product> products) {
         List<ProductSold> productSoldList = new ArrayList<>();
