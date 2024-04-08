@@ -247,7 +247,9 @@ public class FileManager {
         productsSold.stream().map(productSold -> {
             ProductReport productReport = new ProductReport();
             productReport.setProductName(productSold.getProduct().getProductName());
-            productReport.setTotalSold(productSold.getSoldQuantity() * productSold.getProduct().getUnitPrice());
+            productReport.setTotalSold(
+                    Math.round(productSold.getSoldQuantity() * productSold.getProduct().getUnitPrice() * 100.0)
+                            / 100.0);
             return productReport;
         }).distinct().forEach(productsReport::add);
 
